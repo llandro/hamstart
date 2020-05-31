@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hamstart/screens/add_category_screen.dart';
+import 'screens/auth_screen.dart';
+import 'screens/categories_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,37 +18,18 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'HamstArt'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return SplashScreen();
+          if (snapshot.hasData) return CategoriesScreen();
+          return AuthScreen();
+        },
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
-      ),
+      routes: {
+        AddCategoryScreen.routeName: (ctx) => AddCategoryScreen(),
+      },
     );
   }
 }
