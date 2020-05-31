@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "101412145053",
+    "firebase_url": "https://hamstart.firebaseio.com",
+    "project_id": "hamstart",
+    "storage_bucket": "hamstart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101412145053:android:ba545ee3d1490f802b1174",
+        "android_client_info": {
+          "package_name": "com.llandro.hamstart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101412145053-vo0491e5mc3mqrasvliu2ive7b8hvfuf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNLN17KHffVJzXYi3S-rR1J-IxEyaPSA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101412145053-vo0491e5mc3mqrasvliu2ive7b8hvfuf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
