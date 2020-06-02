@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hamstart/widgets/input/image_input.dart';
+import 'package:hamstart/providers/categories.dart';
+import 'package:provider/provider.dart';
 
 class AddCategoryScreen extends StatefulWidget {
   static const routeName = '/categories/add_category';
@@ -22,33 +24,11 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   }
 
   void saveCategory() async {
-    final currentUser = await FirebaseAuth.instance.currentUser();
-
-    final addedRecord = await Firestore.instance
-        .collection('users')
-        .document(currentUser.uid)
-        .collection('categories')
-        .add({
-      'title': _titleController.text,
-      'description': _descriptionController.text
-    });
-
-    final categoryId = addedRecord.documentID;
-
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child('${currentUser.uid}')
-        .child('categories')
-        .child('$categoryId.jpg');
-    await ref.putFile(_pickedImage).onComplete;
-    final imageUrl = (await ref.getDownloadURL()).toString();
-
-    await Firestore.instance
-        .collection('users')
-        .document(currentUser.uid)
-        .collection('categories')
-        .document(categoryId)
-        .setData({'imageURL': imageUrl}, merge: true);
+    await Provider.of<Categories>(context, listen: false).addCategory(
+      title: _titleController.text,
+      description: _descriptionController.text,
+      image: _pickedImage,
+    );
 
     Navigator.of(context).pop();
   }
