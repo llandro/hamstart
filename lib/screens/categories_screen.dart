@@ -49,7 +49,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).pushNamed(AddCategoryScreen.routeName);
+          Navigator.of(context).pushNamed(EditCategoryScreen.routeName);
         },
       ),
     );

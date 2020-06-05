@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           },
         ),
         routes: {
-          AddCategoryScreen.routeName: (ctx) => AddCategoryScreen(),
+          EditCategoryScreen.routeName: (ctx) => EditCategoryScreen(),
         },
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hamstart/widgets/input/image_input.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hamstart/providers/categories.dart';
@@ -17,6 +18,8 @@ class CategoriesGrid extends StatelessWidget {
         mainAxisSpacing: 10,
       ),
       itemBuilder: (ctx, idx) => CategoryItem(
+        categoryId: categories[idx].categoryId,
+        description: categories[idx].description,
         title: categories[idx].title,
         imageURL: categories[idx].imageURL,
       ),

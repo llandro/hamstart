@@ -6,7 +6,11 @@ import 'package:path/path.dart' as path;
 
 class ImageInput extends StatefulWidget {
   Function onSelectImage;
-  ImageInput(this.onSelectImage);
+  File previousImage;
+  ImageInput({
+    this.onSelectImage,
+    this.previousImage,
+  });
 
   @override
   _ImageInputState createState() => _ImageInputState();
@@ -21,10 +25,10 @@ class _ImageInputState extends State<ImageInput> {
       maxWidth: 600,
     );
     setState(() {
-      _storedImage = imageFile;
+      widget.previousImage = imageFile;
     });
     if (imageFile == null) return;
-    widget.onSelectImage(_storedImage);
+    widget.onSelectImage(widget.previousImage);
   }
 
   @override
@@ -37,9 +41,9 @@ class _ImageInputState extends State<ImageInput> {
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
-          child: _storedImage != null
+          child: widget.previousImage != null
               ? Image.file(
-                  _storedImage,
+                  widget.previousImage,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 )

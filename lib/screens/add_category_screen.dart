@@ -1,21 +1,30 @@
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hamstart/widgets/input/image_input.dart';
 import 'package:hamstart/providers/categories.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
-class AddCategoryScreen extends StatefulWidget {
+class EditCategoryScreen extends StatefulWidget {
   static const routeName = '/categories/add_category';
+
+  final String categoryId;
+  final String title;
+  final String description;
+  final String imageURL;
+  EditCategoryScreen(
+      {this.categoryId, this.title, this.description, this.imageURL});
+
   @override
-  _AddCategoryScreenState createState() => _AddCategoryScreenState();
+  _EditCategoryScreenState createState() => _EditCategoryScreenState();
 }
 
-class _AddCategoryScreenState extends State<AddCategoryScreen> {
-  TextEditingController _titleController = TextEditingController();
+class _EditCategoryScreenState extends State<EditCategoryScreen> {
+  TextEditingController _titleController;
   TextEditingController _descriptionController = TextEditingController();
   File _pickedImage;
 
@@ -24,13 +33,46 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   }
 
   void saveCategory() async {
-    await Provider.of<Categories>(context, listen: false).addCategory(
-      title: _titleController.text,
-      description: _descriptionController.text,
-      image: _pickedImage,
-    );
-
+    if (widget.categoryId == null) {
+      await Provider.of<Categories>(context, listen: false).addCategory(
+        title: _titleController.text,
+        description: _descriptionController.text,
+        image: _pickedImage,
+      );
+    } else {
+      await Provider.of<Categories>(context, listen: false).updateCategory(
+        categoryId: widget.categoryId,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        image: _pickedImage,
+      );
+    }
     Navigator.of(context).pop();
+  }
+
+  @override
+  void initState() {
+    if (widget.categoryId != null) {
+      _titleController = TextEditingController(text: widget.title);
+      _descriptionController.text = widget.description;
+      loadImage();
+    }
+    super.initState();
+  }
+
+  Future<void> loadImage() async {
+    final http.Response responseData = await http.get(widget.imageURL);
+    Uint8List uint8list = responseData.bodyBytes;
+    var buffer = uint8list.buffer;
+    ByteData byteData = ByteData.view(buffer);
+    var tempDir = await getTemporaryDirectory();
+
+    imageCache.clear();
+    File file = await File('${tempDir.path}/img}').writeAsBytes(
+        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    setState(() {
+      _pickedImage = file;
+    });
   }
 
   @override
@@ -59,7 +101,10 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   SizedBox(
                     width: 10,
                   ),
-                  ImageInput(_selectImage),
+                  ImageInput(
+                    onSelectImage: _selectImage,
+                    previousImage: _pickedImage,
+                  ),
                 ],
               ),
             ),

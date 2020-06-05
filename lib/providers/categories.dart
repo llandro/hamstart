@@ -51,6 +51,45 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateCategory(
+      {@required String categoryId,
+      String title,
+      String description,
+      File image}) async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+
+    await Firestore.instance
+        .collection('users')
+        .document(currentUser.uid)
+        .collection('categories')
+        .document(categoryId)
+        .setData({'title': title, 'description': description});
+
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('${currentUser.uid}')
+        .child('categories')
+        .child('$categoryId.jpg');
+    await ref.putFile(image).onComplete;
+
+    final imageUrl = (await ref.getDownloadURL()).toString();
+
+    await Firestore.instance
+        .collection('users')
+        .document(currentUser.uid)
+        .collection('categories')
+        .document(categoryId)
+        .setData({'imageURL': imageUrl}, merge: true);
+
+    final indexOfEl =
+        _items.indexWhere((element) => element.categoryId == categoryId);
+    _items[indexOfEl].description = description;
+    _items[indexOfEl].title = title;
+    _items[indexOfEl].imageURL = imageUrl;
+
+    notifyListeners();
+  }
+
   Future<void> fetchAndSetCategories() async {
     final currentUser = await FirebaseAuth.instance.currentUser();
     final categories = await Firestore.instance
@@ -58,14 +97,16 @@ class Categories with ChangeNotifier {
         .document(currentUser.uid)
         .collection('categories')
         .getDocuments();
-    _items = categories.documents
-        .map((e) => Category(
-              categoryId: e['categoryId'],
-              title: e['title'],
-              description: e['description'],
-              imageURL: e['imageURL'],
-            ))
-        .toList();
+    _items = categories.documents.map(
+      (e) {
+        return Category(
+          categoryId: e.documentID,
+          title: e['title'],
+          description: e['description'],
+          imageURL: e['imageURL'],
+        );
+      },
+    ).toList();
     notifyListeners();
   }
 }
