@@ -1,13 +1,12 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hamstart/widgets/input/image_input.dart';
 import 'package:hamstart/providers/categories.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
+
+import 'package:hamstart/services/image_loader.dart';
 
 class EditCategoryScreen extends StatefulWidget {
   static const routeName = '/categories/add_category';
@@ -55,21 +54,13 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
     if (widget.categoryId != null) {
       _titleController = TextEditingController(text: widget.title);
       _descriptionController.text = widget.description;
-      loadImage();
+      loadImage(widget.imageURL);
     }
     super.initState();
   }
 
-  Future<void> loadImage() async {
-    final http.Response responseData = await http.get(widget.imageURL);
-    Uint8List uint8list = responseData.bodyBytes;
-    var buffer = uint8list.buffer;
-    ByteData byteData = ByteData.view(buffer);
-    var tempDir = await getTemporaryDirectory();
-
-    imageCache.clear();
-    File file = await File('${tempDir.path}/img}').writeAsBytes(
-        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  Future<void> loadImage(loadingImageURL) async {
+    File file = await ImageLoader.loadImage(loadingImageURL);
     setState(() {
       _pickedImage = file;
     });

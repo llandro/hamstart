@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
+import 'package:hamstart/services/image_loader.dart';
 
 class ImageInput extends StatefulWidget {
-  Function onSelectImage;
-  File previousImage;
+  final Function onSelectImage;
+  final File previousImage;
   ImageInput({
     this.onSelectImage,
     this.previousImage,
@@ -18,6 +18,13 @@ class ImageInput extends StatefulWidget {
 
 class _ImageInputState extends State<ImageInput> {
   File _storedImage;
+  TextEditingController _URLController = TextEditingController();
+  bool _isInit = true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<void> _takePicture() async {
     final imageFile = await ImagePicker.pickImage(
@@ -25,45 +32,85 @@ class _ImageInputState extends State<ImageInput> {
       maxWidth: 600,
     );
     setState(() {
-      widget.previousImage = imageFile;
+      _storedImage = imageFile;
     });
     if (imageFile == null) return;
-    widget.onSelectImage(widget.previousImage);
+    widget.onSelectImage(_storedImage);
+  }
+
+  Future<void> _loadPicture() async {
+    if (_URLController.text.trim() != '') {
+      try {
+        final imageFile =
+            await ImageLoader.loadImage(_URLController.text.trim());
+        setState(() {
+          _storedImage = imageFile;
+        });
+      } catch (e) {
+        print('Invalid URL');
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    if (_storedImage == null && widget.previousImage != null)
+      _storedImage = widget.previousImage;
+    return Column(
       children: <Widget>[
-        Container(
-          width: 150,
-          height: 150,
-          decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.grey),
-          ),
-          child: widget.previousImage != null
-              ? Image.file(
-                  widget.previousImage,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                )
-              : Text(
-                  'No image',
-                  textAlign: TextAlign.center,
-                ),
-          alignment: Alignment.center,
+        Row(
+          children: <Widget>[
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.grey),
+              ),
+              child: _storedImage != null
+                  ? Image.file(
+                      _storedImage,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    )
+                  : Text(
+                      'No image',
+                      textAlign: TextAlign.center,
+                    ),
+              alignment: Alignment.center,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: FlatButton.icon(
+                onPressed: _takePicture,
+                icon: Icon(Icons.camera),
+                label: Text('Take picture'),
+                textColor: Theme.of(context).primaryColor,
+              ),
+            ),
+          ],
         ),
         SizedBox(
-          width: 10,
+          height: 10,
         ),
-        Expanded(
-          child: FlatButton.icon(
-            onPressed: _takePicture,
-            icon: Icon(Icons.camera),
-            label: Text('Take picture'),
-            textColor: Theme.of(context).primaryColor,
-          ),
-        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(labelText: 'Picture URL'),
+                controller: _URLController,
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            IconButton(
+              icon: Icon(Icons.file_download),
+              onPressed: _loadPicture,
+            )
+          ],
+        )
       ],
     );
   }
