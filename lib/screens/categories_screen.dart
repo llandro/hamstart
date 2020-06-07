@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hamstart/app_drawer.dart';
 import 'package:hamstart/providers/categories.dart';
-import 'package:hamstart/screens/add_category_screen.dart';
+import 'package:hamstart/screens/edit_category_screen.dart';
 import 'package:hamstart/widgets/categories_grid.dart';
 
 import 'package:provider/provider.dart';
@@ -41,11 +41,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       appBar: AppBar(
         title: Text('Choose a category'),
       ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : CategoriesGrid(),
+      body: Container(
+        padding: EdgeInsets.all(10),
+        child: _isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : CategoriesGrid(),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

@@ -90,6 +90,25 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeCategory(String categoryId) async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('${currentUser.uid}')
+        .child('categories')
+        .child('$categoryId.jpg');
+    await ref.delete();
+
+    await Firestore.instance
+        .collection('users')
+        .document(currentUser.uid)
+        .collection('categories')
+        .document(categoryId)
+        .delete();
+
+    await fetchAndSetCategories();
+  }
+
   Future<void> fetchAndSetCategories() async {
     final currentUser = await FirebaseAuth.instance.currentUser();
     final categories = await Firestore.instance

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hamstart/providers/categories.dart';
-import 'package:hamstart/screens/add_category_screen.dart';
+import 'package:hamstart/screens/edit_category_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/categories_screen.dart';
 import 'screens/splash_screen.dart';

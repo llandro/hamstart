@@ -23,6 +23,7 @@ class _ImageInputState extends State<ImageInput> {
 
   @override
   void initState() {
+    _storedImage = widget.previousImage;
     super.initState();
   }
 
@@ -54,8 +55,6 @@ class _ImageInputState extends State<ImageInput> {
 
   @override
   Widget build(BuildContext context) {
-    if (_storedImage == null && widget.previousImage != null)
-      _storedImage = widget.previousImage;
     return Column(
       children: <Widget>[
         Row(

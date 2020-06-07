@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hamstart/screens/add_category_screen.dart';
+import 'package:hamstart/screens/edit_category_screen.dart';
+import 'package:hamstart/providers/categories.dart';
+import 'package:provider/provider.dart';
 
 class CategoryItem extends StatefulWidget {
   final String imageURL;
@@ -19,6 +21,24 @@ class CategoryItem extends StatefulWidget {
 }
 
 class _CategoryItemState extends State<CategoryItem> {
+  void _editCategory() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => EditCategoryScreen(
+          categoryId: widget.categoryId,
+          title: widget.title,
+          description: widget.description,
+          imageURL: widget.imageURL,
+        ),
+      ),
+    );
+  }
+
+  void _removeCategory() {
+    Provider.of<Categories>(context, listen: false)
+        .removeCategory(widget.categoryId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -38,17 +58,42 @@ class _CategoryItemState extends State<CategoryItem> {
           ),
         )
       ]),
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => EditCategoryScreen(
-              categoryId: widget.categoryId,
-              title: widget.title,
-              description: widget.description,
-              imageURL: widget.imageURL,
-            ),
-          ),
-        );
+      onTap: () {},
+      onLongPress: () async {
+        final value = await showMenu(
+            context: context,
+            position: new RelativeRect.fromLTRB(65.0, 40.0, 0.0, 0.0),
+            items: [
+              PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.edit),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.delete),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text('Delete'),
+                  ],
+                ),
+              ),
+            ]);
+        if (value == 'edit') {
+          _editCategory();
+        } else if (value == 'delete') {
+          _removeCategory();
+        }
       },
     );
   }
