@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hamstart/screens/edit_category_screen.dart';
 import 'package:hamstart/providers/categories.dart';
+import 'package:hamstart/screens/items_screen.dart';
 import 'package:provider/provider.dart';
 
 class CategoryItem extends StatefulWidget {
@@ -39,6 +40,16 @@ class _CategoryItemState extends State<CategoryItem> {
         .removeCategory(widget.categoryId);
   }
 
+  void _openCategory() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ItemsScreen(
+          widget.categoryId,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -58,7 +69,9 @@ class _CategoryItemState extends State<CategoryItem> {
           ),
         )
       ]),
-      onTap: () {},
+      onTap: () {
+        _openCategory();
+      },
       onLongPress: () async {
         final value = await showMenu(
             context: context,

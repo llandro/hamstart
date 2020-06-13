@@ -106,7 +106,8 @@ class Categories with ChangeNotifier {
         .document(categoryId)
         .delete();
 
-    await fetchAndSetCategories();
+    _items.removeWhere((element) => element.categoryId == categoryId);
+    notifyListeners();
   }
 
   Future<void> fetchAndSetCategories() async {
