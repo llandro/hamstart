@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hamstart/models/product.dart';
+import 'package:hamstart/screens/image_picker_screen.dart';
 
 class EditItemScreen extends StatefulWidget {
   static const routeName = '/edit_item';
@@ -94,25 +95,42 @@ class _EditItemScreenState extends State<EditItemScreen> {
                         SizedBox(
                           width: 10,
                         ),
-                        Container(
-                          height: 200,
-                          width: 200,
-                          child: FutureBuilder(
-                            future: _loadImage(),
-                            builder: (ctx, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting)
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              return _image != null
-                                  ? Image.file(
-                                      _image,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset('assets/images/s1200.jpg');
-                            },
+                        GestureDetector(
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            child: FutureBuilder(
+                              future: _loadImage(),
+                              builder: (ctx, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                return _image != null
+                                    ? Image.file(
+                                        _image,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset('assets/images/s1200.jpg');
+                              },
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ImagePickerScreen(
+                                  title: 'Image',
+                                  previousImage: _image,
+                                  onSelectImage: (File newImage) {
+                                    setState(() {
+                                      _image = newImage;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

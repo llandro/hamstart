@@ -43,9 +43,7 @@ class _CategoryItemState extends State<CategoryItem> {
   void _openCategory() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ItemsScreen(
-          widget.categoryId,
-        ),
+        builder: (_) => ItemsScreen(widget.categoryId, widget.title),
       ),
     );
   }

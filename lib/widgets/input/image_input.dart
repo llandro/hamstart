@@ -47,6 +47,7 @@ class _ImageInputState extends State<ImageInput> {
         setState(() {
           _storedImage = imageFile;
         });
+        widget.onSelectImage(_storedImage);
       } catch (e) {
         print('Invalid URL');
       }

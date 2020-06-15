@@ -5,7 +5,8 @@ import 'package:hamstart/providers/products.dart';
 
 class ItemsScreen extends StatefulWidget {
   final String categoryId;
-  ItemsScreen(this.categoryId);
+  final String categoryTitle;
+  ItemsScreen(this.categoryId, this.categoryTitle);
 
   @override
   _ItemsScreenState createState() => _ItemsScreenState();
@@ -37,6 +38,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
     final items =
         Provider.of<Products>(context).categoryItems(widget.categoryId);
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.categoryTitle),
+      ),
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(),
