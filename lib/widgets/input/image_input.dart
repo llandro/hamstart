@@ -36,7 +36,7 @@ class _ImageInputState extends State<ImageInput> {
       _storedImage = imageFile;
     });
     if (imageFile == null) return;
-    widget.onSelectImage(_storedImage);
+    widget.onSelectImage(imageFile);
   }
 
   Future<void> _loadPicture() async {
@@ -44,10 +44,14 @@ class _ImageInputState extends State<ImageInput> {
       try {
         final imageFile =
             await ImageLoader.loadImage(_URLController.text.trim());
+//        imageCache.clear();
+        setState(() {
+          _storedImage = null;
+        });
+        widget.onSelectImage(imageFile);
         setState(() {
           _storedImage = imageFile;
         });
-        widget.onSelectImage(_storedImage);
       } catch (e) {
         print('Invalid URL');
       }
@@ -71,6 +75,7 @@ class _ImageInputState extends State<ImageInput> {
                       _storedImage,
                       fit: BoxFit.cover,
                       width: double.infinity,
+                      key: ValueKey(_storedImage.length()),
                     )
                   : Text(
                       'No image',

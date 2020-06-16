@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hamstart/screens/edit_item_screen.dart';
+import 'package:hamstart/widgets/items/items_grid.dart';
 import 'package:provider/provider.dart';
 import 'package:hamstart/providers/products.dart';
 
@@ -22,7 +23,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
       setState(() {
         _isLoading = true;
       });
-      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+      Provider.of<Products>(context, listen: false)
+          .fetchAndSetProducts()
+          .then((_) {
         setState(() {
           _isLoading = false;
         });
@@ -49,7 +52,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
               ? Center(
                   child: Text('No items in this category yet. Add one'),
                 )
-              : null,
+              : ItemsGrid(widget.categoryId),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

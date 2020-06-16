@@ -54,11 +54,13 @@ class _CategoryItemState extends State<CategoryItem> {
       child: Stack(children: [
         Container(
           width: 300,
-          child: FadeInImage(
-            placeholder: AssetImage('assets/images/s1200.jpg'),
-            image: NetworkImage(widget.imageURL),
-            fit: BoxFit.cover,
-          ),
+          child: widget.imageURL == null
+              ? Text('No image')
+              : FadeInImage(
+                  placeholder: AssetImage('assets/images/s1200.jpg'),
+                  image: NetworkImage(widget.imageURL),
+                  fit: BoxFit.cover,
+                ),
         ),
         Container(
           decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5)),

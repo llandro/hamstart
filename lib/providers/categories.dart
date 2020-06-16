@@ -97,7 +97,11 @@ class Categories with ChangeNotifier {
         .child('${currentUser.uid}')
         .child('categories')
         .child('$categoryId.jpg');
-    await ref.delete();
+    try {
+      await ref.delete();
+    } catch (e) {
+      print(e.toString());
+    }
 
     await Firestore.instance
         .collection('users')
