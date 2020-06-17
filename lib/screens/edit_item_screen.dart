@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hamstart/models/product.dart';
+import 'package:hamstart/providers/products.dart';
 import 'package:hamstart/screens/image_picker_screen.dart';
+import 'package:provider/provider.dart';
 
 class EditItemScreen extends StatefulWidget {
   static const routeName = '/edit_item';
@@ -38,6 +40,22 @@ class _EditItemScreenState extends State<EditItemScreen> {
 
   Future<void> _loadImage() async {}
   Future<void> _loadPainting() async {}
+
+  Future<void> _saveItem() async {
+    _isSaving = true;
+    await Provider.of<Products>(context).addProduct(
+      categoryId: widget.categoryId,
+      title: _titleController.text,
+      description: _descriptionController.text,
+      quantity: _qty,
+      image: _image,
+      painting: _painting,
+      additionalFields: {},
+      additionalImages: [],
+    );
+
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +118,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                             height: 200,
                             width: 200,
                             child: FutureBuilder(
-                              future: _loadImage(),
+                              future: _loadPainting(),
                               builder: (ctx, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting)
@@ -111,8 +129,12 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                     ? Image.file(
                                         _image,
                                         fit: BoxFit.cover,
+                                        key: ValueKey(_image.length()),
                                       )
-                                    : Image.asset('assets/images/s1200.jpg');
+                                    : Image.asset(
+                                        'assets/images/s1200.jpg',
+                                        fit: BoxFit.cover,
+                                      );
                               },
                             ),
                           ),
@@ -144,25 +166,42 @@ class _EditItemScreenState extends State<EditItemScreen> {
                         SizedBox(
                           width: 10,
                         ),
-                        Container(
-                          height: 200,
-                          width: 200,
-                          child: FutureBuilder(
-                            future: _loadImage(),
-                            builder: (ctx, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting)
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              return _painting != null
-                                  ? Image.file(
-                                      _painting,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset('assets/images/s1200.jpg');
-                            },
+                        GestureDetector(
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            child: FutureBuilder(
+                              future: _loadImage(),
+                              builder: (ctx, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                return _painting != null
+                                    ? Image.file(
+                                        _painting,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset('assets/images/s1200.jpg');
+                              },
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ImagePickerScreen(
+                                  title: 'Painting',
+                                  previousImage: _painting,
+                                  onSelectImage: (File newImage) {
+                                    setState(() {
+                                      _painting = newImage;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     )
@@ -173,7 +212,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
             _isSaving
                 ? Center(child: CircularProgressIndicator())
                 : RaisedButton.icon(
-                    onPressed: () {},
+                    onPressed: _saveItem,
                     icon: Icon(Icons.add),
                     label: Text('Save item'),
                     elevation: 0,

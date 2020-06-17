@@ -60,7 +60,10 @@ class ItemItem extends StatelessWidget {
           if (imageURL == null && paintingURL == null)
             Container(
               width: 300,
-              child: Image.asset('assets/images/s1200.jpg'),
+              child: Image.asset(
+                'assets/images/s1200.jpg',
+                fit: BoxFit.cover,
+              ),
             ),
           Text(title),
         ],

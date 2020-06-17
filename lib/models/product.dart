@@ -6,8 +6,8 @@ class Product {
   double quantity;
   String imageURL;
   String paintingURL;
-  List<String> additionalPictures;
-  Map<String, String> additionalFields;
+  List<dynamic> additionalPictures;
+  Map<String, dynamic> additionalFields;
 
   Product({
     this.productId,
