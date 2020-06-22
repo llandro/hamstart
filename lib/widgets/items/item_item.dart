@@ -18,20 +18,25 @@ class ItemItem extends StatelessWidget {
     return GestureDetector(
       child: Column(
         children: <Widget>[
-          if (imageURL != null && paintingURL != null)
+          if (imageURL != null &&
+              paintingURL != null &&
+              imageURL != '' &&
+              paintingURL != '')
             Row(
               children: <Widget>[
-                Container(
-                  width: 150,
+                Expanded(
                   child: FadeInImage(
+                    width: 150,
+                    height: 70,
                     placeholder: AssetImage('assets/images/s1200.jpg'),
                     image: NetworkImage(imageURL),
                     fit: BoxFit.cover,
                   ),
                 ),
-                Container(
-                  width: 150,
+                Expanded(
                   child: FadeInImage(
+                    width: 150,
+                    height: 70,
                     placeholder: AssetImage('assets/images/s1200.jpg'),
                     image: NetworkImage(paintingURL),
                     fit: BoxFit.cover,
@@ -39,27 +44,34 @@ class ItemItem extends StatelessWidget {
                 ),
               ],
             ),
-          if (imageURL != null && paintingURL == null)
+          if (imageURL != null &&
+              imageURL != '' &&
+              (paintingURL == null || paintingURL == ''))
             Container(
               width: 300,
+              height: 70,
               child: FadeInImage(
                 placeholder: AssetImage('assets/images/s1200.jpg'),
                 image: NetworkImage(imageURL),
                 fit: BoxFit.cover,
               ),
             ),
-          if (imageURL == null && paintingURL != null)
+          if ((imageURL == null || imageURL == '') &&
+              (paintingURL != null && paintingURL != ''))
             Container(
               width: 300,
+              height: 70,
               child: FadeInImage(
                 placeholder: AssetImage('assets/images/s1200.jpg'),
                 image: NetworkImage(paintingURL),
                 fit: BoxFit.cover,
               ),
             ),
-          if (imageURL == null && paintingURL == null)
+          if ((imageURL == null || imageURL == '') &&
+              (paintingURL == null || paintingURL == ''))
             Container(
               width: 300,
+              height: 70,
               child: Image.asset(
                 'assets/images/s1200.jpg',
                 fit: BoxFit.cover,

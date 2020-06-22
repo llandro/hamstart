@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hamstart/app_drawer.dart';
 import 'package:hamstart/providers/categories.dart';
 import 'package:hamstart/screens/edit_category_screen.dart';
-import 'package:hamstart/widgets/categories_grid.dart';
+import 'package:hamstart/widgets/categories/categories_grid.dart';
 
 import 'package:provider/provider.dart';
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hamstart/widgets/input/image_input.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hamstart/providers/categories.dart';
-import 'package:hamstart/widgets/category_item.dart';
+import 'package:hamstart/widgets/categories/category_item.dart';
 
 class CategoriesGrid extends StatelessWidget {
   @override

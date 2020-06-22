@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:hamstart/models/product.dart';
 import 'package:hamstart/providers/products.dart';
 import 'package:hamstart/screens/image_picker_screen.dart';
+import 'package:hamstart/widgets/input/properties_input.dart';
 import 'package:provider/provider.dart';
+import 'package:hamstart/widgets/input/image_getter.dart';
 
 class EditItemScreen extends StatefulWidget {
   static const routeName = '/edit_item';
@@ -26,6 +28,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
   double _qty = 1;
   File _image;
   File _painting;
+  Map<String, dynamic> _properties = {};
 
   @override
   void initState() {
@@ -33,6 +36,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
       _titleController.text = widget.product.title;
       _descriptionController.text = widget.product.description;
       _qty = widget.product.quantity;
+      _properties = widget.product.additionalFields;
     }
 
     super.initState();
@@ -50,7 +54,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
       quantity: _qty,
       image: _image,
       painting: _painting,
-      additionalFields: {},
+      additionalFields: _properties,
       additionalImages: [],
     );
 
@@ -106,105 +110,51 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     SizedBox(
                       height: 5,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Image'),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        GestureDetector(
-                          child: Container(
-                            height: 200,
-                            width: 200,
-                            child: FutureBuilder(
-                              future: _loadPainting(),
-                              builder: (ctx, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting)
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                return _image != null
-                                    ? Image.file(
-                                        _image,
-                                        fit: BoxFit.cover,
-                                        key: ValueKey(_image.length()),
-                                      )
-                                    : Image.asset(
-                                        'assets/images/s1200.jpg',
-                                        fit: BoxFit.cover,
-                                      );
+                    ImageGetter(
+                      title: 'Image',
+                      loadImage: _loadImage,
+                      image: _image,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ImagePickerScreen(
+                              title: 'Image',
+                              previousImage: _image,
+                              onSelectImage: (File newImage) {
+                                setState(() {
+                                  _image = newImage;
+                                });
                               },
                             ),
                           ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ImagePickerScreen(
-                                  title: 'Image',
-                                  previousImage: _image,
-                                  onSelectImage: (File newImage) {
-                                    setState(() {
-                                      _image = newImage;
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                        );
+                      },
                     ),
                     SizedBox(
                       height: 5,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Painting'),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        GestureDetector(
-                          child: Container(
-                            height: 200,
-                            width: 200,
-                            child: FutureBuilder(
-                              future: _loadImage(),
-                              builder: (ctx, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting)
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                return _painting != null
-                                    ? Image.file(
-                                        _painting,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.asset('assets/images/s1200.jpg');
+                    ImageGetter(
+                      title: 'Painting',
+                      loadImage: _loadPainting,
+                      image: _painting,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ImagePickerScreen(
+                              title: 'Painting',
+                              previousImage: _painting,
+                              onSelectImage: (File newImage) {
+                                setState(() {
+                                  _painting = newImage;
+                                });
                               },
                             ),
                           ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ImagePickerScreen(
-                                  title: 'Painting',
-                                  previousImage: _painting,
-                                  onSelectImage: (File newImage) {
-                                    setState(() {
-                                      _painting = newImage;
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    )
+                        );
+                      },
+                    ),
+                    //additional fields
+                    PropertiesInput(_properties),
                   ],
                 ),
               ),
