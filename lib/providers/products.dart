@@ -19,7 +19,7 @@ class Products with ChangeNotifier {
     File image,
     File painting,
     List<File> additionalImages,
-    Map<String, String> additionalFields,
+    Map<String, dynamic> additionalFields,
   }) async {
     final currentUser = await FirebaseAuth.instance.currentUser();
 

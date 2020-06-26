@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hamstart/models/item_property.dart';
 
 class PropertiesInput extends StatefulWidget {
   final Map<String, dynamic> properties;
-  PropertiesInput(this.properties);
+  final Function onPropertiesChanged;
+  PropertiesInput({this.properties, this.onPropertiesChanged});
 
   @override
   _PropertiesInputState createState() => _PropertiesInputState();
-}
-
-class ItemProperty {
-  String title;
-  String value;
-  ItemProperty({this.title, this.value});
 }
 
 class _PropertiesInputState extends State<PropertiesInput> {
@@ -66,6 +62,14 @@ class _PropertiesInputState extends State<PropertiesInput> {
     });
   }
 
+  void updateProperties() {
+    for (int i = 0; i < properties.length; i++) {
+      properties[i].title = titles[i].text;
+      properties[i].value = values[i].text;
+    }
+    widget.onPropertiesChanged(properties);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -78,6 +82,9 @@ class _PropertiesInputState extends State<PropertiesInput> {
                 Container(
                   child: TextField(
                     controller: titles[idx],
+                    onChanged: (_) {
+                      updateProperties();
+                    },
                   ),
                   width: 100,
                 ),
@@ -87,6 +94,9 @@ class _PropertiesInputState extends State<PropertiesInput> {
                 Container(
                   child: TextField(
                     controller: values[idx],
+                    onChanged: (_) {
+                      updateProperties();
+                    },
                   ),
                   width: 200,
                 ),

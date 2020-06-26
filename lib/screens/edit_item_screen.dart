@@ -8,6 +8,8 @@ import 'package:hamstart/screens/image_picker_screen.dart';
 import 'package:hamstart/widgets/input/properties_input.dart';
 import 'package:provider/provider.dart';
 import 'package:hamstart/widgets/input/image_getter.dart';
+import 'package:hamstart/models/item_property.dart';
+import 'package:hamstart/services/image_loader.dart';
 
 class EditItemScreen extends StatefulWidget {
   static const routeName = '/edit_item';
@@ -42,11 +44,21 @@ class _EditItemScreenState extends State<EditItemScreen> {
     super.initState();
   }
 
-  Future<void> _loadImage() async {}
-  Future<void> _loadPainting() async {}
+  Future<void> _loadImage() async {
+    File file = await ImageLoader.loadImage(widget.product.imageURL);
+    _image = file;
+  }
+
+  Future<void> _loadPainting() async {
+    File file = await ImageLoader.loadImage(widget.product.paintingURL);
+    _painting = file;
+  }
 
   Future<void> _saveItem() async {
-    _isSaving = true;
+    setState(() {
+      _isSaving = true;
+    });
+
     await Provider.of<Products>(context).addProduct(
       categoryId: widget.categoryId,
       title: _titleController.text,
@@ -59,6 +71,18 @@ class _EditItemScreenState extends State<EditItemScreen> {
     );
 
     Navigator.of(context).pop();
+  }
+
+  void _onPropertiesChanged(List<ItemProperty> newProperties) {
+    if (newProperties != null) {
+      Map<String, dynamic> newPropertiesMap = {};
+      for (int i = 0; i < newProperties.length; i++) {
+        if (newProperties[i].title.trim() != '') {
+          newPropertiesMap[newProperties[i].title] = newProperties[i].value;
+        }
+      }
+      _properties = newPropertiesMap;
+    }
   }
 
   @override
@@ -110,51 +134,69 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     SizedBox(
                       height: 5,
                     ),
-                    ImageGetter(
-                      title: 'Image',
-                      loadImage: _loadImage,
-                      image: _image,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ImagePickerScreen(
-                              title: 'Image',
-                              previousImage: _image,
-                              onSelectImage: (File newImage) {
-                                setState(() {
-                                  _image = newImage;
-                                });
-                              },
-                            ),
-                          ),
+                    FutureBuilder(
+                      future: _loadImage(),
+                      builder: (ctx, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting)
+                          return Container();
+                        return ImageGetter(
+                          title: 'Image',
+                          loadImage: _loadImage,
+                          image: _image,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ImagePickerScreen(
+                                  title: 'Image',
+                                  previousImage: _image,
+                                  onSelectImage: (File newImage) {
+                                    setState(() {
+                                      _image = newImage;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
+
                     SizedBox(
                       height: 5,
                     ),
-                    ImageGetter(
-                      title: 'Painting',
-                      loadImage: _loadPainting,
-                      image: _painting,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ImagePickerScreen(
-                              title: 'Painting',
-                              previousImage: _painting,
-                              onSelectImage: (File newImage) {
-                                setState(() {
-                                  _painting = newImage;
-                                });
-                              },
-                            ),
-                          ),
+                    FutureBuilder(
+                      future: _loadPainting(),
+                      builder: (ctx, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting)
+                          return Container();
+                        return ImageGetter(
+                          title: 'Painting',
+                          loadImage: _loadPainting,
+                          image: _painting,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ImagePickerScreen(
+                                  title: 'Painting',
+                                  previousImage: _painting,
+                                  onSelectImage: (File newImage) {
+                                    setState(() {
+                                      _painting = newImage;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
                     //additional fields
-                    PropertiesInput(_properties),
+                    PropertiesInput(
+                      properties: _properties,
+                      onPropertiesChanged: _onPropertiesChanged,
+                    ),
                   ],
                 ),
               ),

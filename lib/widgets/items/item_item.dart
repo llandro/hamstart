@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hamstart/screens/edit_item_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:hamstart/providers/products.dart';
 
 class ItemItem extends StatelessWidget {
   final String productId;
@@ -12,6 +15,20 @@ class ItemItem extends StatelessWidget {
     this.imageURL,
     this.paintingURL,
   });
+
+  void _editItem(BuildContext context) {
+    final item = Provider.of<Products>(context, listen: false)
+        .items
+        .firstWhere((element) => element.productId == productId);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EditItemScreen(
+          categoryId: item.categoryId,
+          product: item,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +99,7 @@ class ItemItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
       ),
       onTap: () {
-        print(productId);
+        _editItem(context);
       },
     );
   }
