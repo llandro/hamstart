@@ -59,7 +59,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
       _isSaving = true;
     });
 
-    await Provider.of<Products>(context).addProduct(
+    await Provider.of<Products>(context, listen: false).addProduct(
       categoryId: widget.categoryId,
       title: _titleController.text,
       description: _descriptionController.text,

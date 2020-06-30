@@ -13,7 +13,7 @@ class ItemsGrid extends StatelessWidget {
       itemCount: items.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 1.5,
+        childAspectRatio: 1.1,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
@@ -22,6 +22,7 @@ class ItemsGrid extends StatelessWidget {
         productId: items[idx].productId,
         imageURL: items[idx].imageURL,
         paintingURL: items[idx].paintingURL,
+        qty: items[idx].quantity,
       ),
     );
   }

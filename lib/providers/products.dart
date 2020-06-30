@@ -105,6 +105,23 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateQty(String productId, double qty) async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+    final _item =
+        _items.firstWhere((element) => element.productId == productId);
+    _item.quantity = qty;
+
+    await Firestore.instance
+        .collection('users')
+        .document(currentUser.uid)
+        .collection('categories')
+        .document(_item.categoryId)
+        .collection('products')
+        .document(productId)
+        .updateData({'quantity': qty});
+    notifyListeners();
+  }
+
   Future<void> fetchAndSetProducts() async {
     final currentUser = await FirebaseAuth.instance.currentUser();
     final categories = await Firestore.instance
