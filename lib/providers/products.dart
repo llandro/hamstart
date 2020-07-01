@@ -105,6 +105,60 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateItem({
+    String productId,
+    String categoryId,
+    String title,
+    String description,
+    double quantity,
+    File image,
+    File painting,
+    List<File> additionalImages,
+    Map<String, dynamic> additionalFields,
+  }) async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+    final _item =
+        _items.firstWhere((element) => element.productId == productId);
+    _item.quantity = quantity;
+    _item.title = title;
+    _item.description = description;
+    _item.additionalFields = additionalFields;
+
+    String imageURL = '';
+    var ref = FirebaseStorage.instance
+        .ref()
+        .child('${currentUser.uid}')
+        .child('categories')
+        .child('$categoryId')
+        .child('$productId')
+        .child('main_image');
+    if (image != null) {
+      await ref.putFile(image).onComplete;
+      imageURL = (await ref.getDownloadURL()).toString();
+    } else {
+      await ref.delete();
+    }
+
+    String paintingURL = '';
+    ref = FirebaseStorage.instance
+        .ref()
+        .child('${currentUser.uid}')
+        .child('categories')
+        .child('$categoryId')
+        .child('$productId')
+        .child('painting_image');
+    if (painting != null) {
+      await ref.putFile(painting).onComplete;
+      paintingURL = (await ref.getDownloadURL()).toString();
+    } else {
+      await ref.delete();
+    }
+
+    _item.imageURL = imageURL;
+    _item.paintingURL = paintingURL;
+    notifyListeners();
+  }
+
   Future<void> updateQty(String productId, double qty) async {
     final currentUser = await FirebaseAuth.instance.currentUser();
     final _item =

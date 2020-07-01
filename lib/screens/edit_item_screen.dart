@@ -58,18 +58,30 @@ class _EditItemScreenState extends State<EditItemScreen> {
     setState(() {
       _isSaving = true;
     });
-
-    await Provider.of<Products>(context, listen: false).addProduct(
-      categoryId: widget.categoryId,
-      title: _titleController.text,
-      description: _descriptionController.text,
-      quantity: _qty,
-      image: _image,
-      painting: _painting,
-      additionalFields: _properties,
-      additionalImages: [],
-    );
-
+    if (widget.product != null) {
+      await Provider.of<Products>(context, listen: false).updateItem(
+        productId: widget.product.productId,
+        categoryId: widget.categoryId,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        quantity: _qty,
+        image: _image,
+        painting: _painting,
+        additionalFields: _properties,
+        additionalImages: [],
+      );
+    } else {
+      await Provider.of<Products>(context, listen: false).addProduct(
+        categoryId: widget.categoryId,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        quantity: _qty,
+        image: _image,
+        painting: _painting,
+        additionalFields: _properties,
+        additionalImages: [],
+      );
+    }
     Navigator.of(context).pop();
   }
 
